@@ -55,6 +55,14 @@ public class Pedido implements Serializable {
 		super();
 	}
 
+	public Double getValorTotal() {
+		Double valorTotal = 0.0;
+		for (ItemPedido itemPedido : itens) {
+			valorTotal += itemPedido.getSubTotal();
+		}
+		return valorTotal;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
