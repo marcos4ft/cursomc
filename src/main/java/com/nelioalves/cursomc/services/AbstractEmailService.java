@@ -13,22 +13,23 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.nelioalves.cursomc.domain.Cliente;
 import com.nelioalves.cursomc.domain.Pedido;
 
-public abstract class AbstractEmailService implements EmailService{
-	
+public abstract class AbstractEmailService implements EmailService {
+
 	@Value("${default.sender}")
 	private String sender;
-	
+
 	@Autowired
 	private TemplateEngine templateEngine;
-	
+
 	@Autowired
 	private JavaMailSender javaMailSender;
 
 	@Override
 	public void sendOrderConfirmationPedido(Pedido obj) {
-		SimpleMailMessage sm = prepareSimpleMailMessageFromPedido(obj);	
+		SimpleMailMessage sm = prepareSimpleMailMessageFromPedido(obj);
 		sendEmail(sm);
 	}
 
@@ -41,13 +42,13 @@ public abstract class AbstractEmailService implements EmailService{
 		sm.setText(obj.toString());
 		return sm;
 	}
-	
+
 	protected String htmlFromTemplatePedido(Pedido obj) {
 		Context context = new Context();
 		context.setVariable("pedido", obj);
 		return templateEngine.process("email/confirmacaoPedido", context);
 	}
-	
+
 	@Override
 	public void sendOrderConfirmationHtmlEmail(Pedido obj) {
 		MimeMessage mm;
@@ -56,7 +57,7 @@ public abstract class AbstractEmailService implements EmailService{
 			sendHtmlEmail(mm);
 		} catch (MessagingException e) {
 			sendOrderConfirmationPedido(obj);
-		}	
+		}
 	}
 
 	protected MimeMessage prepareMimeMessageFromPedido(Pedido obj) throws MessagingException {
@@ -66,7 +67,30 @@ public abstract class AbstractEmailService implements EmailService{
 		mmh.setFrom(sender);
 		mmh.setSubject("Pedido confirmado! Código " + obj.getId());
 		mmh.setSentDate(new Date(System.currentTimeMillis()));
-		mmh.setText(htmlFromTemplatePedido(obj),true);
+		mmh.setText(htmlFromTemplatePedido(obj), true);
+		return mm;
+	}
+
+	@Override
+	public void sendNewPasswordEmail(Cliente cliente, String newPass) {
+		MimeMessage mm;
+		try {
+			mm = prepareNewPasswordEmail(cliente, newPass);
+			sendHtmlEmail(mm);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	protected MimeMessage prepareNewPasswordEmail(Cliente cliente, String newPass) throws MessagingException {
+		MimeMessage mm = javaMailSender.createMimeMessage();
+		MimeMessageHelper mmh = new MimeMessageHelper(mm, true);
+		mmh.setTo(cliente.getEmail());
+		mmh.setFrom(sender);
+		mmh.setSubject("Solicitação de nova senha");
+		mmh.setSentDate(new Date(System.currentTimeMillis()));
+		mmh.setText("Nova senha: " + newPass);
 		return mm;
 	}
 }
