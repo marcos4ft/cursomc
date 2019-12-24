@@ -38,9 +38,19 @@ public class Cliente implements Serializable {
 	private String cpfOuCnpj;
 
 	private Integer tipo;
-	
+
 	@JsonIgnore
 	private String senha;
+
+	private String imageUrl;
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
 
 	public String getSenha() {
 		return senha;
@@ -60,13 +70,13 @@ public class Cliente implements Serializable {
 	@ElementCollection
 	@CollectionTable(name = "TELEFONE")
 	private Set<String> telefones = new HashSet<>();
-	
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "PERFIS")
 	private Set<Integer> perfis = new HashSet<>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "cliente")  
+	@OneToMany(mappedBy = "cliente")
 	private List<Pedido> pedidos = new ArrayList<>();
 
 	public Cliente() {
@@ -74,7 +84,7 @@ public class Cliente implements Serializable {
 		addPerfil(Perfil.CLIENTE);
 	}
 
-	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo,String senha) {
+	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo, String senha) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -175,17 +185,17 @@ public class Cliente implements Serializable {
 	public void setPedidos(List<Pedido> pedidos) {
 		this.pedidos = pedidos;
 	}
-	
-	public Set<Perfil> getPerfis(){
+
+	public Set<Perfil> getPerfis() {
 		Set<Perfil> perfis = new HashSet<>();
-		for(Integer perfil:this.perfis) {
+		for (Integer perfil : this.perfis) {
 			perfis.add(Perfil.toEnum(perfil));
 		}
 		return perfis;
 	}
-	
+
 	public void addPerfil(Perfil perfil) {
-		 this.perfis.add(perfil.getCod());
+		this.perfis.add(perfil.getCod());
 	}
 
 }
