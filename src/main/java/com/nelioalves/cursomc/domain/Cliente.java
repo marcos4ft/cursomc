@@ -42,16 +42,6 @@ public class Cliente implements Serializable {
 	@JsonIgnore
 	private String senha;
 
-	private String imageUrl;
-
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
 	public String getSenha() {
 		return senha;
 	}
